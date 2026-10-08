@@ -31,6 +31,16 @@ const en = {
   'prices.spotOmr': 'OMR per troy ounce (24K)',
   'prices.peg': 'Converted at 1 USD = 0.3845 OMR',
   'prices.byKarat': 'Prices by karat',
+  'history.title': 'Price history · 24K per gram',
+  'history.range.24h': '24H',
+  'history.range.7d': '7D',
+  'history.range.30d': '30D',
+  'history.range.all': 'All',
+  'history.high': 'High',
+  'history.low': 'Low',
+  'history.change': 'Change',
+  'history.empty': 'Not enough data for this range yet. Keep the app open or come back later to see the trend.',
+  'history.note': 'History is recorded on this device while the app is open (one point every 5 minutes).',
 } as const;
 
 export type TranslationKey = keyof typeof en;
@@ -69,6 +79,16 @@ const ar: Record<TranslationKey, string> = {
   'prices.spotOmr': 'ريال للأونصة (عيار 24)',
   'prices.peg': 'محوّل بسعر 1 دولار = 0.3845 ريال',
   'prices.byKarat': 'الأسعار حسب العيار',
+  'history.title': 'سجل الأسعار · عيار 24 للغرام',
+  'history.range.24h': '24 ساعة',
+  'history.range.7d': '7 أيام',
+  'history.range.30d': '30 يوم',
+  'history.range.all': 'الكل',
+  'history.high': 'الأعلى',
+  'history.low': 'الأدنى',
+  'history.change': 'التغيّر',
+  'history.empty': 'لا توجد بيانات كافية لهذه الفترة بعد. خلّ التطبيق مفتوح أو ارجع لاحقاً لتشوف الاتجاه.',
+  'history.note': 'يتم تسجيل السجل على هذا الجهاز أثناء فتح التطبيق (نقطة كل 5 دقائق).',
 };
 
 export const TRANSLATIONS: Record<Lang, Record<TranslationKey, string>> = { en, ar };

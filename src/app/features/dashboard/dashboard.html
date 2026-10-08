@@ -89,6 +89,8 @@
         }
       </div>
     </section>
+
+    <app-price-history-card />
   } @else if (prices.status() !== 'error') {
     <div class="card empty">{{ 'prices.loading' | t }}</div>
   }

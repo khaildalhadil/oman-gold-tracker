@@ -1,0 +1,46 @@
+<section class="card">
+  <div class="header">
+    <h2 class="card-title">{{ 'history.title' | t }}</h2>
+    <div class="segmented" role="group">
+      @for (r of ranges; track r.id) {
+        <button
+          type="button"
+          [class.active]="range() === r.id"
+          [attr.aria-pressed]="range() === r.id"
+          (click)="range.set(r.id)"
+        >
+          {{ r.label | t }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (stats(); as s) {
+    <dl class="stats">
+      <div>
+        <dt>{{ 'history.high' | t }}</dt>
+        <dd class="num">{{ s.high | omr }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'history.low' | t }}</dt>
+        <dd class="num">{{ s.low | omr }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'history.change' | t }}</dt>
+        <dd class="num" [class.up]="s.change > 0" [class.down]="s.change < 0">
+          {{ s.change | pct }}
+        </dd>
+      </div>
+    </dl>
+    <app-line-chart
+      [points]="points()"
+      [formatValue]="formatValue"
+      [formatTime]="formatTime"
+      [label]="'history.title' | t"
+    />
+  } @else {
+    <p class="empty">{{ 'history.empty' | t }}</p>
+  }
+
+  <p class="muted note">{{ 'history.note' | t }}</p>
+</section>

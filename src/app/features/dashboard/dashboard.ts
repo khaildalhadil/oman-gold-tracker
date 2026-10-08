@@ -5,10 +5,11 @@ import { I18N_PIPES } from '../../core/i18n/i18n-pipes';
 import { PER_UNIT_LABEL, UNIT_LABEL } from '../../core/i18n/labels';
 import { GoldPriceStore } from '../../core/prices/gold-price-store';
 import { LocalStore } from '../../core/storage/local-store';
+import { PriceHistoryCard } from './price-history-card/price-history-card';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [...I18N_PIPES],
+  imports: [PriceHistoryCard, ...I18N_PIPES],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
