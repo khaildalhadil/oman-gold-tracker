@@ -1,0 +1,146 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>{{ 'portfolio.title' | t }}</h1>
+      <p>{{ 'portfolio.subtitle' | t }}</p>
+    </div>
+  </div>
+
+  @if (summary(); as s) {
+    <div class="summary">
+      <article class="card stat">
+        <span class="muted">{{ 'portfolio.value' | t }}</span>
+        <strong class="num gold">{{ s.totalValue | omr }}</strong>
+      </article>
+      <article class="card stat">
+        <span class="muted">{{ 'portfolio.totalCost' | t }}</span>
+        <strong class="num">{{ s.totalCost | omr }}</strong>
+      </article>
+      <article class="card stat">
+        <span class="muted">{{ 'portfolio.profit' | t }}</span>
+        <strong class="num" [class.up]="s.profit > 0" [class.down]="s.profit < 0">
+          {{ s.profit | omr }}
+        </strong>
+        <small class="num" [class.up]="s.profit > 0" [class.down]="s.profit < 0">
+          {{ s.profitPercent | pct }}
+        </small>
+      </article>
+      <article class="card stat">
+        <span class="muted">{{ 'portfolio.pureGold' | t }}</span>
+        <strong class="num">{{ 'portfolio.gramsValue' | t: { g: (s.pureGrams | num: 3) } }}</strong>
+      </article>
+    </div>
+  }
+
+  <form class="card" [formGroup]="form" (ngSubmit)="add()" novalidate>
+    <h2 class="card-title">{{ 'portfolio.add' | t }}</h2>
+    <div class="form-grid">
+      <label class="field">
+        <span>{{ 'portfolio.name' | t }}</span>
+        <input
+          class="input"
+          formControlName="name"
+          maxlength="60"
+          [placeholder]="'portfolio.namePlaceholder' | t"
+          [class.invalid]="showError('name')"
+        />
+      </label>
+      <label class="field">
+        <span>{{ 'portfolio.weight' | t }}</span>
+        <input
+          class="input num"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="any"
+          formControlName="grams"
+          [class.invalid]="showError('grams')"
+        />
+      </label>
+      <label class="field">
+        <span>{{ 'portfolio.karat' | t }}</span>
+        <select class="input" formControlName="karat">
+          @for (k of karats; track k.karat) {
+            <option [ngValue]="k.karat">{{ 'karat.label' | t: { k: k.karat } }}</option>
+          }
+        </select>
+      </label>
+      <label class="field">
+        <span>{{ 'portfolio.cost' | t }}</span>
+        <input
+          class="input num"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="any"
+          formControlName="cost"
+          [class.invalid]="showError('cost')"
+        />
+      </label>
+      <label class="field">
+        <span>{{ 'portfolio.date' | t }}</span>
+        <input
+          class="input"
+          type="date"
+          [max]="maxDate"
+          formControlName="purchasedOn"
+          [class.invalid]="showError('purchasedOn')"
+        />
+      </label>
+      <div class="field submit">
+        <button type="submit" class="btn btn-primary">{{ 'portfolio.addButton' | t }}</button>
+      </div>
+    </div>
+    @if (form.invalid && form.touched) {
+      <p class="error">{{ 'portfolio.formError' | t }}</p>
+    }
+  </form>
+
+  <section class="card">
+    @if (summary(); as s) {
+      @if (s.rows.length) {
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr>
+                <th>{{ 'portfolio.name' | t }}</th>
+                <th>{{ 'portfolio.karat' | t }}</th>
+                <th>{{ 'portfolio.weight' | t }}</th>
+                <th>{{ 'portfolio.date' | t }}</th>
+                <th>{{ 'portfolio.cost' | t }}</th>
+                <th>{{ 'portfolio.value' | t }}</th>
+                <th>{{ 'portfolio.profit' | t }}</th>
+                <th><span class="visually-hidden">{{ 'portfolio.remove' | t }}</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of s.rows; track row.id) {
+                <tr>
+                  <td>{{ row.name }}</td>
+                  <td>{{ 'karat.label' | t: { k: row.karat } }}</td>
+                  <td class="num">{{ row.grams | num: 3 }}</td>
+                  <td>{{ row.purchasedOn }}</td>
+                  <td class="num">{{ row.cost | omr }}</td>
+                  <td class="num">{{ row.value | omr }}</td>
+                  <td class="num" [class.up]="row.profit > 0" [class.down]="row.profit < 0">
+                    {{ row.profit | omr }} ({{ row.profitPercent | pct }})
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-ghost small" (click)="remove(row)">
+                      {{ 'portfolio.remove' | t }}
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="empty">{{ 'portfolio.empty' | t }}</p>
+      }
+    } @else {
+      <p class="empty">{{ 'portfolio.noPrice' | t }}</p>
+    }
+    <p class="muted note">{{ 'portfolio.note' | t }}</p>
+  </section>
+</section>

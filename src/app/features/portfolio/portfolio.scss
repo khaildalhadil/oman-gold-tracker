@@ -1,0 +1,54 @@
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.stat {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+
+  strong {
+    font-size: 1.5rem;
+    font-weight: 800;
+    justify-self: start;
+  }
+
+  small {
+    justify-self: start;
+    font-weight: 700;
+  }
+}
+
+.gold {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.submit {
+  align-content: end;
+}
+
+.input.invalid {
+  border-color: var(--down);
+}
+
+.error {
+  margin: 12px 0 0;
+  color: var(--down);
+  font-size: 0.9rem;
+}
+
+.small {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 0.85rem;
+}
+
+.note {
+  margin: 12px 0 0;
+  font-size: 0.8rem;
+}

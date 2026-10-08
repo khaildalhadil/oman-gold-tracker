@@ -9,6 +9,7 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   { path: '', label: 'nav.prices' },
   { path: 'calculator', label: 'nav.calculator' },
+  { path: 'portfolio', label: 'nav.portfolio' },
 ];
 
 export const routes: Routes = [
@@ -19,6 +20,10 @@ export const routes: Routes = [
   {
     path: 'calculator',
     loadComponent: () => import('./features/calculator/calculator').then((m) => m.Calculator),
+  },
+  {
+    path: 'portfolio',
+    loadComponent: () => import('./features/portfolio/portfolio').then((m) => m.Portfolio),
   },
   { path: '**', redirectTo: '' },
 ];
