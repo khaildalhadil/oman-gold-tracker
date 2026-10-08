@@ -53,7 +53,10 @@ export class PercentPipe implements PipeTransform {
 export class DateTimePipe implements PipeTransform {
   private readonly i18n = inject(I18n);
 
-  transform(value: number | Date | null | undefined, options?: Intl.DateTimeFormatOptions): string {
+  transform(
+    value: number | Date | null | undefined,
+    options?: Intl.DateTimeFormatOptions | 'smart',
+  ): string {
     return value == null ? '—' : this.i18n.formatDateTime(value, options);
   }
 }

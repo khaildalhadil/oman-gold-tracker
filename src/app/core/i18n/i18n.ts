@@ -69,7 +69,12 @@ export class I18n {
     return `${sign}${this.formatNumber(value, 2)}%`;
   }
 
-  formatDateTime(value: number | Date, options?: Intl.DateTimeFormatOptions): string {
+  formatDateTime(value: number | Date, options?: Intl.DateTimeFormatOptions | 'smart'): string {
+    if (options === 'smart') {
+      // Time only for today, otherwise include the date.
+      const isToday = new Date(value).toDateString() === new Date().toDateString();
+      options = isToday ? { timeStyle: 'short' } : { dateStyle: 'short', timeStyle: 'short' };
+    }
     return new Intl.DateTimeFormat(
       this.locale(),
       options ?? { dateStyle: 'medium', timeStyle: 'short' },
