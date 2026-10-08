@@ -6,6 +6,12 @@ export interface NavItem {
   label: TranslationKey;
 }
 
-export const NAV_ITEMS: NavItem[] = [];
+export const NAV_ITEMS: NavItem[] = [{ path: '', label: 'nav.prices' }];
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  {
+    path: '',
+    loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
+  },
+  { path: '**', redirectTo: '' },
+];

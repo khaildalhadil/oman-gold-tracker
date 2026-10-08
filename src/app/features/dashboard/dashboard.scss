@@ -1,0 +1,132 @@
+.refresh {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.spin.spinning {
+  display: inline-block;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--down) 50%, transparent);
+  background: color-mix(in srgb, var(--down) 12%, transparent);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 20px;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hero {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  background:
+    radial-gradient(circle at 85% 0%, color-mix(in srgb, var(--gold) 22%, transparent), transparent 60%),
+    var(--surface);
+}
+
+.hero-price {
+  font-size: clamp(2.2rem, 7vw, 3.4rem);
+  font-weight: 800;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  justify-self: start;
+}
+
+.chip {
+  justify-self: start;
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.spot dl {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 12px;
+
+  dt {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+}
+
+.karats-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  .card-title {
+    margin: 0;
+  }
+}
+
+.karat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.karat {
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+
+  &.pure {
+    border-color: color-mix(in srgb, var(--gold) 60%, transparent);
+  }
+}
+
+.karat-name {
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.karat-price {
+  font-size: 1.6rem;
+  font-weight: 800;
+  justify-self: start;
+}
+
+.small {
+  font-size: 0.85rem;
+}

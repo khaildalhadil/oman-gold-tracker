@@ -1,0 +1,95 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>{{ 'prices.title' | t }}</h1>
+      <p>{{ 'prices.subtitle' | t }}</p>
+    </div>
+    <div class="refresh">
+      @if (prices.quote(); as quote) {
+        <span class="muted">
+          {{ 'prices.updatedAt' | t: { time: (quote.updatedAt | dt: 'smart') } }}
+        </span>
+      }
+      <button
+        type="button"
+        class="btn"
+        [disabled]="prices.status() === 'loading'"
+        (click)="prices.refresh()"
+      >
+        <span class="spin" [class.spinning]="prices.status() === 'loading'" aria-hidden="true">↻</span>
+        {{ 'prices.refresh' | t }}
+      </button>
+    </div>
+  </div>
+
+  @if (prices.status() === 'error') {
+    <div class="notice" role="alert">
+      {{ (prices.quote() ? 'prices.stale' : 'prices.error') | t }}
+      <button type="button" class="btn btn-ghost" (click)="prices.refresh()">
+        {{ 'prices.retry' | t }}
+      </button>
+    </div>
+  }
+
+  @if (prices.quote()) {
+    <div class="hero-grid">
+      <article class="card hero">
+        <span class="muted">{{ 'prices.hero' | t }}</span>
+        <div class="hero-price num">{{ pureGramPrice() | omr }}</div>
+        @if (prices.change(); as change) {
+          <span class="chip" [class.up]="change.percent > 0" [class.down]="change.percent < 0">
+            <span class="num">{{ change.percent | pct }}</span>
+            {{ 'prices.changeSince' | t: { time: (change.since | dt: 'smart') } }}
+          </span>
+        }
+      </article>
+
+      <article class="card spot">
+        <div class="card-title">{{ 'prices.spot' | t }}</div>
+        <dl>
+          <div>
+            <dt>{{ 'prices.spotUsd' | t }}</dt>
+            <dd class="num">{{ prices.usdPerOunce() | usd }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'prices.spotOmr' | t }}</dt>
+            <dd class="num">{{ omrPerOunce() | omr }}</dd>
+          </div>
+        </dl>
+        <small class="muted">{{ 'prices.peg' | t }}</small>
+      </article>
+    </div>
+
+    <section class="card">
+      <div class="karats-header">
+        <h2 class="card-title">{{ 'prices.byKarat' | t }}</h2>
+        <div class="segmented" role="group">
+          @for (u of units; track u) {
+            <button
+              type="button"
+              [class.active]="unit() === u"
+              [attr.aria-pressed]="unit() === u"
+              (click)="setUnit(u)"
+            >
+              {{ unitLabel[u] | t }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="karat-grid">
+        @for (k of karats(); track k.karat) {
+          <article class="karat" [class.pure]="k.karat === 24">
+            <div class="karat-name">{{ 'karat.label' | t: { k: k.karat } }}</div>
+            <div class="karat-price num">{{ k.price | omr }}</div>
+            <div class="muted small">
+              {{ perUnitLabel[unit()] | t }} · {{ 'karat.fineness' | t: { f: k.fineness } }}
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+  } @else if (prices.status() !== 'error') {
+    <div class="card empty">{{ 'prices.loading' | t }}</div>
+  }
+</section>
