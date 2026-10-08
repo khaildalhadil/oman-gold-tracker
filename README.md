@@ -1,59 +1,83 @@
-# OmanGoldTracker
+# متتبع الذهب العماني · Oman Gold Tracker
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.0.
+تطبيق Angular يعرض أسعار الذهب لحظة بلحظة بالريال العماني، مع حاسبة ومحفظة وتنبيهات أسعار.
+واجهة عربية (RTL) افتراضياً مع إمكانية التحويل للإنجليزية.
 
-## Development server
+An Angular app that tracks live gold prices in Omani Rial, with a calculator, a personal
+portfolio and price alerts. Arabic (RTL) by default, switchable to English.
 
-To start a local development server, run:
+## المميزات · Features
 
-```bash
-ng serve
-```
+| | العربية | English |
+| --- | --- | --- |
+| **الأسعار** | سعر الغرام لعيار 24 و22 و21 و18 بالريال، بالغرام أو التولة أو الأونصة، مع التغيّر خلال 24 ساعة والسعر العالمي بالدولار | Price per karat (24K/22K/21K/18K) in OMR per gram, tola or ounce, 24h change and the USD spot price |
+| **سجل الأسعار** | رسم بياني لعيار 24 (24 ساعة / 7 أيام / 30 يوم / الكل) مع الأعلى والأدنى | 24K chart (24h / 7d / 30d / all) with high, low and change |
+| **الحاسبة** | قيمة القطعة حسب الوزن والعيار + المصنعية + ضريبة 5% | Value by weight and karat, plus making charges and 5% VAT |
+| **محفظتي** | سجّل قطعك الذهبية وشوف قيمتها الحالية والربح/الخسارة | Record your pieces and see current value and profit/loss |
+| **التنبيهات** | تنبيه لما سعر الغرام يصير أعلى أو أقل من هدفك (داخل التطبيق + إشعار المتصفح) | Alert when the price per gram crosses a target (in-app toast + browser notification) |
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## التشغيل · Getting started
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Requires Node.js 20+ and npm.
 
 ```bash
-ng generate --help
+npm install
 ```
-
-## Building
-
-To build the project run:
 
 ```bash
-ng build
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Then open http://localhost:4200.
 
-## Running unit tests
+| Command | What it does |
+| --- | --- |
+| `npm start` | Dev server with live reload |
+| `npm run build` | Production build into `dist/oman-gold-tracker` |
+| `npm test` | Unit tests (Vitest) |
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## مصدر البيانات · Data and calculations
 
-```bash
-ng test
+- **Spot price:** [gold-api.com](https://gold-api.com) (`/price/XAU`), free, no API key, CORS-enabled.
+  The app polls it every minute and again whenever the tab becomes visible.
+- **OMR conversion:** the Omani Rial is pegged to the US dollar, so prices use
+  `1 USD = 0.3845 OMR`.
+- **Per gram:** `USD/oz × 0.3845 ÷ 31.1034768 × fineness`, with fineness
+  999 (24K), 916 (22K), 875 (21K) and 750 (18K). 1 tola = 11.6638 g.
+- **History:** the free API has no history endpoint, so the app records one point every
+  5 minutes in `localStorage` while it is open. The chart fills in over time.
+- **Storage:** language, unit, history, portfolio and alerts are stored only in the browser
+  (`localStorage`, keys prefixed with `omanGoldTracker.`). Nothing is sent to a server.
+
+> الأسعار استرشادية فقط. أسعار محلات الذهب تشمل المصنعية وقد تختلف.
+> Prices are indicative only; shop prices include making charges and may differ.
+
+## هيكل المشروع · Project structure
+
+```
+src/app/
+├── core/
+│   ├── gold/        # constants (karats, units, peg) and pure pricing math
+│   ├── prices/      # gold-api.com client, live price store, local history
+│   ├── portfolio/   # holdings store and valuation
+│   ├── alerts/      # price alerts store and notifications
+│   ├── i18n/        # Arabic/English translations, formatting pipes
+│   ├── storage/     # safe localStorage wrapper
+│   └── toasts/      # in-app notifications service
+├── shared/
+│   ├── line-chart/  # dependency-free SVG chart
+│   └── toast-host/  # toast container
+└── features/        # lazy-loaded pages
+    ├── dashboard/   # prices + history chart
+    ├── calculator/
+    ├── portfolio/
+    └── alerts/
 ```
 
-## Running end-to-end tests
+Built with Angular 22: standalone components, signals, zoneless change detection,
+the new control flow and lazy-loaded routes. No UI or chart libraries.
 
-For end-to-end (e2e) testing, run:
+## الكمتات · Commit convention
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Each change is its own commit following [Conventional Commits](https://www.conventionalcommits.org/):
+`feat(scope): …`, `fix(scope): …`, `style: …`, `docs: …`, `chore: …`.
