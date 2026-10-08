@@ -3,10 +3,11 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { I18n } from './core/i18n/i18n';
 import { TranslatePipe } from './core/i18n/i18n-pipes';
 import { GoldPriceStore } from './core/prices/gold-price-store';
+import { ToastHost } from './shared/toast-host/toast-host';
 import { NAV_ITEMS } from './app.routes';
 
 @Component({
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslatePipe],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ToastHost, TranslatePipe],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',
