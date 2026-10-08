@@ -1,0 +1,82 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>{{ 'calc.title' | t }}</h1>
+      <p>{{ 'calc.subtitle' | t }}</p>
+    </div>
+  </div>
+
+  <div class="layout">
+    <form class="card form-grid" [formGroup]="form" (submit)="$event.preventDefault()">
+      <label class="field">
+        <span>{{ 'calc.weight' | t }}</span>
+        <input class="input num" type="number" inputmode="decimal" min="0" step="any" formControlName="weight" />
+      </label>
+
+      <label class="field">
+        <span>{{ 'calc.unit' | t }}</span>
+        <select class="input" formControlName="unit">
+          @for (u of units; track u) {
+            <option [ngValue]="u">{{ unitLabel[u] | t }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="field">
+        <span>{{ 'calc.karat' | t }}</span>
+        <select class="input" formControlName="karat">
+          @for (k of karats; track k.karat) {
+            <option [ngValue]="k.karat">{{ 'karat.label' | t: { k: k.karat } }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="field">
+        <span>{{ 'calc.making' | t }}</span>
+        <input class="input num" type="number" inputmode="decimal" min="0" step="any" formControlName="makingPerGram" />
+      </label>
+
+      <label class="check">
+        <input type="checkbox" formControlName="includeVat" />
+        <span>{{ 'calc.vat' | t }}</span>
+      </label>
+    </form>
+
+    <article class="card result" aria-live="polite">
+      @if (quote(); as q) {
+        <dl>
+          <div>
+            <dt>{{ 'calc.pricePerGram' | t }}</dt>
+            <dd class="num">{{ pricePerGram() | omr }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'calc.weightInGrams' | t }}</dt>
+            <dd class="num">{{ grams() | num: 3 }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'calc.goldValue' | t }}</dt>
+            <dd class="num">{{ q.goldValue | omr }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'calc.makingTotal' | t }}</dt>
+            <dd class="num">{{ q.makingCharges | omr }}</dd>
+          </div>
+          @if (value().includeVat) {
+            <div>
+              <dt>{{ 'calc.vatAmount' | t }}</dt>
+              <dd class="num">{{ q.vat | omr }}</dd>
+            </div>
+          }
+        </dl>
+        <div class="total">
+          <span>{{ 'calc.total' | t }}</span>
+          <strong class="num">{{ q.total | omr }}</strong>
+        </div>
+      } @else {
+        <p class="empty">{{ 'calc.invalid' | t }}</p>
+      }
+    </article>
+  </div>
+
+  <p class="muted note">{{ 'calc.vatNote' | t }}</p>
+</section>

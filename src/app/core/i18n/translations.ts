@@ -41,6 +41,21 @@ const en = {
   'history.change': 'Change',
   'history.empty': 'Not enough data for this range yet. Keep the app open or come back later to see the trend.',
   'history.note': 'History is recorded on this device while the app is open (one point every 5 minutes).',
+  'calc.title': 'Gold calculator',
+  'calc.subtitle': 'Estimate what a piece is worth or what a jeweller will charge.',
+  'calc.weight': 'Weight',
+  'calc.unit': 'Unit',
+  'calc.karat': 'Karat',
+  'calc.making': 'Making charge (OMR per gram)',
+  'calc.vat': 'Include 5% VAT',
+  'calc.pricePerGram': 'Price per gram',
+  'calc.weightInGrams': 'Weight in grams',
+  'calc.goldValue': 'Gold value',
+  'calc.makingTotal': 'Making charges',
+  'calc.vatAmount': 'VAT (5%)',
+  'calc.total': 'Estimated total',
+  'calc.invalid': 'Enter a valid weight and making charge to see the estimate.',
+  'calc.vatNote': 'In Oman, VAT applies to jewellery; investment gold (99% purity and above) is zero-rated.',
 } as const;
 
 export type TranslationKey = keyof typeof en;
@@ -89,6 +104,21 @@ const ar: Record<TranslationKey, string> = {
   'history.change': 'التغيّر',
   'history.empty': 'لا توجد بيانات كافية لهذه الفترة بعد. خلّ التطبيق مفتوح أو ارجع لاحقاً لتشوف الاتجاه.',
   'history.note': 'يتم تسجيل السجل على هذا الجهاز أثناء فتح التطبيق (نقطة كل 5 دقائق).',
+  'calc.title': 'حاسبة الذهب',
+  'calc.subtitle': 'احسب قيمة القطعة أو السعر المتوقع عند الصائغ.',
+  'calc.weight': 'الوزن',
+  'calc.unit': 'الوحدة',
+  'calc.karat': 'العيار',
+  'calc.making': 'المصنعية (ريال للغرام)',
+  'calc.vat': 'إضافة ضريبة القيمة المضافة 5%',
+  'calc.pricePerGram': 'سعر الغرام',
+  'calc.weightInGrams': 'الوزن بالغرام',
+  'calc.goldValue': 'قيمة الذهب',
+  'calc.makingTotal': 'المصنعية',
+  'calc.vatAmount': 'الضريبة (5%)',
+  'calc.total': 'الإجمالي التقديري',
+  'calc.invalid': 'أدخل وزن ومصنعية صحيحة لعرض التقدير.',
+  'calc.vatNote': 'في عُمان تُطبّق الضريبة على المشغولات الذهبية، والذهب الاستثماري (نقاوة 99% فأكثر) خاضع لنسبة صفر.',
 };
 
 export const TRANSLATIONS: Record<Lang, Record<TranslationKey, string>> = { en, ar };
