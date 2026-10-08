@@ -1,0 +1,84 @@
+:host {
+  display: block;
+}
+
+.chart {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 220px auto;
+  gap: 6px 10px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: end;
+}
+
+.plot {
+  position: relative;
+  border-bottom: 1px solid var(--border);
+  touch-action: pan-y;
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+  }
+}
+
+.line {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.cursor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
+.dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: var(--gold-strong);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 30%, transparent);
+  pointer-events: none;
+}
+
+.tooltip {
+  position: absolute;
+  top: 6px;
+  margin-left: 10px;
+  display: grid;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  white-space: nowrap;
+  pointer-events: none;
+
+  &.flip {
+    transform: translateX(calc(-100% - 20px));
+  }
+}
+
+.x-axis {
+  grid-column: 2;
+  display: flex;
+  justify-content: space-between;
+}

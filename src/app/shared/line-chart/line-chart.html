@@ -1,0 +1,42 @@
+@if (plot(); as p) {
+  <div class="chart">
+    <div class="y-axis num">
+      <span>{{ formatValue()(p.maxV) }}</span>
+      <span>{{ formatValue()(p.minV) }}</span>
+    </div>
+
+    <div class="plot" (pointerleave)="hoverIndex.set(null)">
+      <svg
+        [attr.viewBox]="'0 0 ' + width + ' ' + height"
+        preserveAspectRatio="none"
+        role="img"
+        [attr.aria-label]="label()"
+        (pointermove)="onPointerMove($event)"
+        (pointerdown)="onPointerMove($event)"
+      >
+        <defs>
+          <linearGradient [attr.id]="gradientId" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="var(--gold)" stop-opacity="0.35" />
+            <stop offset="1" stop-color="var(--gold)" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <path [attr.d]="p.area" [attr.fill]="'url(#' + gradientId + ')'" />
+        <path class="line" [attr.d]="p.line" />
+      </svg>
+
+      @if (hovered(); as h) {
+        <div class="cursor" [style.left.%]="h.x"></div>
+        <div class="dot" [style.left.%]="h.x" [style.top.%]="h.y"></div>
+        <div class="tooltip" [style.left.%]="h.x" [class.flip]="h.x > 70">
+          <strong class="num">{{ formatValue()(h.v) }}</strong>
+          <span>{{ formatTime()(h.t) }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="x-axis">
+      <span>{{ formatTime()(p.minT) }}</span>
+      <span>{{ formatTime()(p.maxT) }}</span>
+    </div>
+  </div>
+}
