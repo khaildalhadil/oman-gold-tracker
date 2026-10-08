@@ -10,6 +10,7 @@ export const NAV_ITEMS: NavItem[] = [
   { path: '', label: 'nav.prices' },
   { path: 'calculator', label: 'nav.calculator' },
   { path: 'portfolio', label: 'nav.portfolio' },
+  { path: 'alerts', label: 'nav.alerts' },
 ];
 
 export const routes: Routes = [
@@ -24,6 +25,10 @@ export const routes: Routes = [
   {
     path: 'portfolio',
     loadComponent: () => import('./features/portfolio/portfolio').then((m) => m.Portfolio),
+  },
+  {
+    path: 'alerts',
+    loadComponent: () => import('./features/alerts/alerts').then((m) => m.Alerts),
   },
   { path: '**', redirectTo: '' },
 ];

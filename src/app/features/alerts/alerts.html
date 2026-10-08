@@ -1,0 +1,102 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>{{ 'alerts.title' | t }}</h1>
+      <p>{{ 'alerts.subtitle' | t }}</p>
+    </div>
+  </div>
+
+  <div class="card permission">
+    <span>{{ permissionText() | t }}</span>
+    @if (store.permission() === 'default') {
+      <button type="button" class="btn" (click)="store.requestPermission()">
+        {{ 'alerts.enableNotifications' | t }}
+      </button>
+    }
+  </div>
+
+  <form class="card" [formGroup]="form" (ngSubmit)="create()" novalidate>
+    <h2 class="card-title">{{ 'alerts.new' | t }}</h2>
+    <div class="form-grid">
+      <label class="field">
+        <span>{{ 'alerts.karat' | t }}</span>
+        <select class="input" formControlName="karat">
+          @for (k of karats; track k.karat) {
+            <option [ngValue]="k.karat">{{ 'karat.label' | t: { k: k.karat } }}</option>
+          }
+        </select>
+      </label>
+      <label class="field">
+        <span>{{ 'alerts.direction' | t }}</span>
+        <select class="input" formControlName="direction">
+          @for (d of directions; track d) {
+            <option [ngValue]="d">{{ (d === 'above' ? 'alerts.above' : 'alerts.below') | t }}</option>
+          }
+        </select>
+      </label>
+      <label class="field">
+        <span>{{ 'alerts.target' | t }}</span>
+        <input
+          class="input num"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="any"
+          formControlName="target"
+          [class.invalid]="form.controls.target.invalid && form.controls.target.touched"
+        />
+      </label>
+      <div class="field submit">
+        <button type="submit" class="btn btn-primary">{{ 'alerts.create' | t }}</button>
+      </div>
+    </div>
+    @if (currentPrice() != null) {
+      <button type="button" class="link" (click)="useCurrentPrice()">
+        {{ 'alerts.current' | t: { price: (currentPrice() | omr) } }}
+      </button>
+    }
+    @if (form.controls.target.invalid && form.controls.target.touched) {
+      <p class="error">{{ 'alerts.formError' | t }}</p>
+    }
+  </form>
+
+  <section class="card">
+    <h2 class="card-title">{{ 'alerts.active' | t }}</h2>
+    @if (rows().length) {
+      <ul class="list">
+        @for (alert of rows(); track alert.id) {
+          <li [class.done]="alert.triggeredAt">
+            <div class="info">
+              <strong>
+                {{
+                  (alert.direction === 'above' ? 'alerts.describeAbove' : 'alerts.describeBelow')
+                    | t: { k: alert.karat, target: (alert.target | omr) }
+                }}
+              </strong>
+              <small class="muted">
+                @if (alert.triggeredAt) {
+                  {{ 'alerts.triggeredAt' | t: { time: (alert.triggeredAt | dt: 'smart') } }}
+                } @else {
+                  {{ 'alerts.waiting' | t }} · {{ 'alerts.current' | t: { price: (alert.current | omr) } }}
+                }
+              </small>
+            </div>
+            <div class="actions">
+              @if (alert.triggeredAt) {
+                <button type="button" class="btn small" (click)="store.rearm(alert.id)">
+                  {{ 'alerts.rearm' | t }}
+                </button>
+              }
+              <button type="button" class="btn btn-ghost small" (click)="store.remove(alert.id)">
+                {{ 'alerts.remove' | t }}
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="empty">{{ 'alerts.empty' | t }}</p>
+    }
+    <p class="muted note">{{ 'alerts.note' | t }}</p>
+  </section>
+</section>
