@@ -1,6 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { karatPrice } from '../../core/gold/gold-math';
-import { GRAMS_PER_TROY_OUNCE, KARATS, WeightUnit } from '../../core/gold/gold.constants';
+import { KARATS, OMR_PER_USD, WeightUnit } from '../../core/gold/gold.constants';
 import { I18N_PIPES } from '../../core/i18n/i18n-pipes';
 import { PER_UNIT_LABEL, UNIT_LABEL } from '../../core/i18n/labels';
 import { GoldPriceStore } from '../../core/prices/gold-price-store';
@@ -22,23 +21,18 @@ export class Dashboard {
   protected readonly perUnitLabel = PER_UNIT_LABEL;
   protected readonly unit = signal<WeightUnit>(this.store.get<WeightUnit>('unit', 'gram'));
 
-  protected readonly pureGramPrice = computed(() => {
-    const usd = this.prices.usdPerOunce();
-    return usd == null ? null : karatPrice(usd, 24);
-  });
+  protected readonly pureGramPrice = computed(() => this.prices.price(24));
 
-  protected readonly omrPerOunce = computed(() => {
-    const perGram = this.pureGramPrice();
-    return perGram == null ? null : perGram * GRAMS_PER_TROY_OUNCE;
+  protected readonly omrPerOunce = computed(() => this.prices.price(24, 'ounce'));
+
+  protected readonly usdPerOunce = computed(() => {
+    const omr = this.omrPerOunce();
+    return omr == null ? null : omr / OMR_PER_USD;
   });
 
   protected readonly karats = computed(() => {
-    const usd = this.prices.usdPerOunce();
     const unit = this.unit();
-    return KARATS.map((k) => ({
-      ...k,
-      price: usd == null ? null : karatPrice(usd, k.karat, unit),
-    }));
+    return KARATS.map((k) => ({ ...k, price: this.prices.price(k.karat, unit) }));
   });
 
   protected setUnit(unit: WeightUnit): void {

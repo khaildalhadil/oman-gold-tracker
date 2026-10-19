@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { map } from 'rxjs';
-import { karatPrice, quotePurchase } from '../../core/gold/gold-math';
+import { quotePurchase } from '../../core/gold/gold-math';
 import { GRAMS_PER_UNIT, KARATS, Karat, WeightUnit } from '../../core/gold/gold.constants';
 import { I18N_PIPES } from '../../core/i18n/i18n-pipes';
 import { UNIT_LABEL } from '../../core/i18n/labels';
@@ -39,19 +39,16 @@ export class Calculator {
     return Number(weight) * GRAMS_PER_UNIT[unit];
   });
 
-  protected readonly pricePerGram = computed(() => {
-    const usd = this.prices.usdPerOunce();
-    return usd == null ? null : karatPrice(usd, this.value().karat);
-  });
+  protected readonly pricePerGram = computed(() => this.prices.price(this.value().karat));
 
   protected readonly quote = computed(() => {
-    const usd = this.prices.usdPerOunce();
-    const { karat, makingPerGram, includeVat } = this.value();
+    const price = this.pricePerGram();
+    const { makingPerGram, includeVat } = this.value();
     const grams = this.grams();
     const making = Number(makingPerGram);
-    if (usd == null || !(grams > 0) || !(making >= 0)) {
+    if (price == null || !(grams > 0) || !(making >= 0)) {
       return null;
     }
-    return quotePurchase(usd, grams, karat, making, includeVat);
+    return quotePurchase(price, grams, making, includeVat);
   });
 }

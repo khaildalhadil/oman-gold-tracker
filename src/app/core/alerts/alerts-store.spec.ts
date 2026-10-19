@@ -1,7 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { karatPrice } from '../gold/gold-math';
-import { SpotQuote } from '../prices/gold-api';
+import { PriceQuote } from '../prices/gold-api';
 import { GoldPriceStore, PriceStatus } from '../prices/gold-price-store';
 import { Toasts } from '../toasts/toasts';
 import { AlertsStore, PriceAlert, isAlertHit } from './alerts-store';
@@ -27,7 +26,8 @@ describe('isAlertHit', () => {
 });
 
 describe('AlertsStore', () => {
-  const quote = signal<SpotQuote | null>(null);
+  const perGram = { 24: 50.95, 22: 46.72, 21: 44.63, 18: 38.25 };
+  const quote = signal<PriceQuote | null>(null);
   const status = signal<PriceStatus>('idle');
   let alerts: AlertsStore;
   let toasts: Toasts;
@@ -44,12 +44,12 @@ describe('AlertsStore', () => {
   });
 
   it('triggers matching alerts once and notifies', () => {
-    const price = karatPrice(4000, 22);
+    const price = perGram[22];
     alerts.add({ karat: 22, direction: 'above', target: price - 1 });
     alerts.add({ karat: 22, direction: 'below', target: price - 1 });
 
-    alerts.check(4000);
-    alerts.check(4000);
+    alerts.check(perGram);
+    alerts.check(perGram);
 
     const [above, below] = alerts.alerts();
     expect(above.triggeredAt).toBeTypeOf('number');
@@ -59,7 +59,7 @@ describe('AlertsStore', () => {
 
   it('re-arms and removes alerts', () => {
     alerts.add({ karat: 24, direction: 'above', target: 1 });
-    alerts.check(4000);
+    alerts.check(perGram);
     const [alert] = alerts.alerts();
 
     alerts.rearm(alert.id);
@@ -74,7 +74,7 @@ describe('AlertsStore', () => {
     alerts.add({ karat: 24, direction: 'above', target: 1 });
     alerts.start();
 
-    quote.set({ usdPerOunce: 4000, updatedAt: 1 });
+    quote.set({ perGram, updatedAt: 1 });
     TestBed.tick();
     expect(alerts.alerts()[0].triggeredAt).toBeUndefined();
 

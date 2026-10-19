@@ -1,17 +1,16 @@
 import { TestBed } from '@angular/core/testing';
-import { goldValue } from '../gold/gold-math';
 import { Holding, PortfolioStore, valuePortfolio } from './portfolio-store';
 
 describe('valuePortfolio', () => {
-  const spot = 4000;
+  const perGram = { 24: 50.95, 22: 46.72, 21: 44.63, 18: 38.25 };
   const holdings: Holding[] = [
     { id: 'a', name: 'Ring', grams: 10, karat: 21, cost: 400, purchasedOn: '2026-01-01' },
     { id: 'b', name: 'Bar', grams: 20, karat: 24, cost: 900, purchasedOn: '2026-02-01' },
   ];
 
   it('values each holding and computes profit', () => {
-    const { rows } = valuePortfolio(holdings, spot);
-    const ringValue = goldValue(spot, 10, 21);
+    const { rows } = valuePortfolio(holdings, perGram);
+    const ringValue = 44.63 * 10;
     expect(rows[0].value).toBeCloseTo(ringValue, 6);
     expect(rows[0].profit).toBeCloseTo(ringValue - 400, 6);
     expect(rows[0].profitPercent).toBeCloseTo(((ringValue - 400) / 400) * 100, 6);
@@ -19,8 +18,8 @@ describe('valuePortfolio', () => {
   });
 
   it('totals the portfolio', () => {
-    const summary = valuePortfolio(holdings, spot);
-    const total = goldValue(spot, 10, 21) + goldValue(spot, 20, 24);
+    const summary = valuePortfolio(holdings, perGram);
+    const total = 44.63 * 10 + 50.95 * 20;
     expect(summary.totalCost).toBe(1300);
     expect(summary.totalValue).toBeCloseTo(total, 6);
     expect(summary.profit).toBeCloseTo(total - 1300, 6);
@@ -28,7 +27,7 @@ describe('valuePortfolio', () => {
   });
 
   it('handles an empty portfolio', () => {
-    const summary = valuePortfolio([], spot);
+    const summary = valuePortfolio([], perGram);
     expect(summary.totalValue).toBe(0);
     expect(summary.profitPercent).toBe(0);
   });

@@ -2,16 +2,17 @@ import { DOCUMENT, DestroyRef, Injectable, computed, inject, signal } from '@ang
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject, catchError, exhaustMap, filter, fromEvent, merge, tap, timer } from 'rxjs';
 import { percentChange } from '../gold/gold-math';
+import { GRAMS_PER_UNIT, Karat, WeightUnit } from '../gold/gold.constants';
 import { LocalStore } from '../storage/local-store';
-import { GoldApi, SpotQuote } from './gold-api';
+import { GoldApi, PriceQuote } from './gold-api';
 import { PriceHistory } from './price-history';
 
 export const REFRESH_INTERVAL_MS = 60 * 1000;
-const LAST_QUOTE_KEY = 'lastQuote';
+const LAST_QUOTE_KEY = 'lastPrices';
 
 export type PriceStatus = 'idle' | 'loading' | 'ok' | 'error';
 
-/** Live spot gold price, refreshed every minute and while the tab is visible. */
+/** Gold prices from the backend API, refreshed every minute and while the tab is visible. */
 @Injectable({ providedIn: 'root' })
 export class GoldPriceStore {
   private readonly api = inject(GoldApi);
@@ -24,11 +25,17 @@ export class GoldPriceStore {
   private started = false;
 
   /** Last known quote; restored from storage so the page is never blank. */
-  readonly quote = signal<SpotQuote | null>(this.store.get<SpotQuote | null>(LAST_QUOTE_KEY, null));
+  readonly quote = signal<PriceQuote | null>(
+    this.store.get<PriceQuote | null>(LAST_QUOTE_KEY, null),
+  );
   readonly status = signal<PriceStatus>('idle');
   readonly lastCheckedAt = signal<number | null>(null);
 
-  readonly usdPerOunce = computed(() => this.quote()?.usdPerOunce ?? null);
+  /** OMR price of one unit of the given karat; null until the first quote. */
+  price(karat: Karat, unit: WeightUnit = 'gram'): number | null {
+    const perGram = this.quote()?.perGram[karat];
+    return perGram == null ? null : perGram * GRAMS_PER_UNIT[unit];
+  }
 
   /** Change against the price ~24h ago (or the oldest point we have). */
   readonly change = computed(() => {
@@ -38,7 +45,7 @@ export class GoldPriceStore {
       return null;
     }
     return {
-      percent: percentChange(base.usd, quote.usdPerOunce),
+      percent: percentChange(base.omr, quote.perGram[24]),
       since: base.t,
     };
   });
@@ -71,7 +78,7 @@ export class GoldPriceStore {
 
   private load() {
     this.status.set('loading');
-    return this.api.fetchSpot().pipe(
+    return this.api.fetchPrices().pipe(
       tap((quote) => {
         this.quote.set(quote);
         this.status.set('ok');
