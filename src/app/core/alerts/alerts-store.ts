@@ -1,5 +1,4 @@
 import { Injectable, Injector, effect, inject, signal, untracked } from '@angular/core';
-import { karatPrice } from '../gold/gold-math';
 import { KARATS, Karat } from '../gold/gold.constants';
 import { I18n } from '../i18n/i18n';
 import { GoldPriceStore } from '../prices/gold-price-store';
@@ -62,7 +61,7 @@ export class AlertsStore {
         const quote = this.prices.quote();
         // Only react to live prices, not the cached quote restored at startup.
         if (quote && this.prices.status() === 'ok') {
-          untracked(() => this.check(quote.usdPerOunce));
+          untracked(() => this.check(quote.perGram));
         }
       },
       { injector: this.injector },
@@ -88,15 +87,15 @@ export class AlertsStore {
     this.permission.set(await Notification.requestPermission());
   }
 
-  /** Fires every armed alert whose condition is met at this spot price. */
-  check(usdPerOunce: number): void {
+  /** Fires every armed alert whose condition is met at these OMR-per-gram prices. */
+  check(perGram: Record<Karat, number>): void {
     const now = Date.now();
     let changed = false;
     const next = this._alerts().map((alert) => {
       if (alert.triggeredAt) {
         return alert;
       }
-      const price = karatPrice(usdPerOunce, alert.karat);
+      const price = perGram[alert.karat];
       if (!isAlertHit(alert, price)) {
         return alert;
       }

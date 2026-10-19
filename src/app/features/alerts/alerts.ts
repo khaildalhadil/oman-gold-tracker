@@ -3,7 +3,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { map } from 'rxjs';
 import { AlertDirection, AlertsStore } from '../../core/alerts/alerts-store';
-import { karatPrice } from '../../core/gold/gold-math';
 import { KARATS, Karat } from '../../core/gold/gold.constants';
 import { I18N_PIPES } from '../../core/i18n/i18n-pipes';
 import { TranslationKey } from '../../core/i18n/translations';
@@ -41,21 +40,14 @@ export class Alerts {
     { initialValue: this.form.controls.karat.value },
   );
 
-  protected readonly currentPrice = computed(() => {
-    const usd = this.prices.usdPerOunce();
-    return usd == null ? null : karatPrice(usd, this.karat());
-  });
+  protected readonly currentPrice = computed(() => this.prices.price(this.karat()));
 
   /** Alerts with the current price of their karat, newest first. */
-  protected readonly rows = computed(() => {
-    const usd = this.prices.usdPerOunce();
-    return [...this.store.alerts()]
+  protected readonly rows = computed(() =>
+    [...this.store.alerts()]
       .sort((a, b) => b.createdAt - a.createdAt)
-      .map((alert) => ({
-        ...alert,
-        current: usd == null ? null : karatPrice(usd, alert.karat),
-      }));
-  });
+      .map((alert) => ({ ...alert, current: this.prices.price(alert.karat) })),
+  );
 
   protected useCurrentPrice(): void {
     const price = this.currentPrice();
@@ -73,9 +65,9 @@ export class Alerts {
     this.store.add({ karat, direction, target: target! });
     this.form.reset({ karat, direction });
     // A new alert may already be satisfied by the current price.
-    const usd = this.prices.usdPerOunce();
-    if (usd != null && this.prices.status() === 'ok') {
-      this.store.check(usd);
+    const quote = this.prices.quote();
+    if (quote && this.prices.status() === 'ok') {
+      this.store.check(quote.perGram);
     }
   }
 }

@@ -38,8 +38,8 @@ export class Portfolio {
   protected readonly holdings = this.portfolio.holdings;
 
   protected readonly summary = computed(() => {
-    const usd = this.prices.usdPerOunce();
-    return usd == null ? null : valuePortfolio(this.holdings(), usd);
+    const perGram = this.prices.quote()?.perGram;
+    return perGram ? valuePortfolio(this.holdings(), perGram) : null;
   });
 
   protected add(): void {

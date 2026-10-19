@@ -1,11 +1,11 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { LocalStore } from '../storage/local-store';
-import { SpotQuote } from './gold-api';
+import { PriceQuote } from './gold-api';
 
-/** One stored spot price: `t` is epoch ms, `usd` is USD per troy ounce. */
+/** One stored price: `t` is epoch ms, `omr` is 24K OMR per gram. */
 export interface PricePoint {
   t: number;
-  usd: number;
+  omr: number;
 }
 
 const STORAGE_KEY = 'history';
@@ -15,7 +15,7 @@ export const MAX_POINTS = 5000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
- * The free price API has no history endpoint, so the app builds its own
+ * The price API has no history endpoint, so the app builds its own
  * history from the quotes it sees and keeps it in localStorage.
  */
 @Injectable({ providedIn: 'root' })
@@ -25,13 +25,13 @@ export class PriceHistory {
 
   readonly points = this._points.asReadonly();
 
-  record(quote: SpotQuote): void {
+  record(quote: PriceQuote): void {
     const points = this._points();
     const last = points.at(-1);
     if (last && quote.updatedAt - last.t < MIN_POINT_INTERVAL_MS) {
       return;
     }
-    const next = [...points, { t: quote.updatedAt, usd: quote.usdPerOunce }].slice(-MAX_POINTS);
+    const next = [...points, { t: quote.updatedAt, omr: quote.perGram[24] }].slice(-MAX_POINTS);
     this._points.set(next);
     this.store.set(STORAGE_KEY, next);
   }
@@ -72,7 +72,7 @@ export class PriceHistory {
     return raw
       .filter(
         (p): p is PricePoint =>
-          typeof p?.t === 'number' && typeof p?.usd === 'number' && p.usd > 0,
+          typeof p?.t === 'number' && typeof p?.omr === 'number' && p.omr > 0,
       )
       .sort((a, b) => a.t - b.t)
       .slice(-MAX_POINTS);

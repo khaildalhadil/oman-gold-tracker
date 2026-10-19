@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { karatPrice, percentChange } from '../../../core/gold/gold-math';
+import { percentChange } from '../../../core/gold/gold-math';
 import { I18n } from '../../../core/i18n/i18n';
 import { I18N_PIPES } from '../../../core/i18n/i18n-pipes';
 import { TranslationKey } from '../../../core/i18n/translations';
@@ -34,7 +34,7 @@ export class PriceHistoryCard {
     const range = RANGES.find((r) => r.id === this.range())!;
     const all = this.history.points();
     const from = Number.isFinite(range.ms) ? Date.now() - range.ms : -Infinity;
-    return all.filter((p) => p.t >= from).map((p) => ({ t: p.t, v: karatPrice(p.usd, 24) }));
+    return all.filter((p) => p.t >= from).map((p) => ({ t: p.t, v: p.omr }));
   });
 
   protected readonly stats = computed(() => {

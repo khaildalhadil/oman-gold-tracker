@@ -1,5 +1,4 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { goldValue } from '../gold/gold-math';
 import { KARATS, Karat } from '../gold/gold.constants';
 import { LocalStore } from '../storage/local-store';
 
@@ -32,10 +31,13 @@ export interface PortfolioSummary {
 
 const STORAGE_KEY = 'holdings';
 
-/** Values every holding at the given spot price and totals the portfolio. */
-export function valuePortfolio(holdings: Holding[], usdPerOunce: number): PortfolioSummary {
+/** Values every holding at the given OMR-per-gram prices and totals the portfolio. */
+export function valuePortfolio(
+  holdings: Holding[],
+  perGram: Record<Karat, number>,
+): PortfolioSummary {
   const rows = holdings.map((h) => {
-    const value = goldValue(usdPerOunce, h.grams, h.karat);
+    const value = perGram[h.karat] * h.grams;
     const profit = value - h.cost;
     const fineness = KARATS.find((k) => k.karat === h.karat)!.fineness;
     return {
